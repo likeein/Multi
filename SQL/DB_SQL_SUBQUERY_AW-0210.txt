@@ -1,0 +1,115 @@
+<   SUBQUERY   실습문제  >
+
+1.  SMITH 보다 월급을  많이 받는 사원들의 이름과 월급을 출력하라 ?
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select ename, sal+nvl(comm,0)
+  2  from emp
+  3* where sal+nvl(comm,0) > (select sal+nvl(comm,0) from emp where ename = 'SMITH')
+SQL> /
+
+
+2.  10 번 부서의 사원들과 같은 월급을 받는 사원들의 이름과 월급과 부서
+   번호를 출력하라 ?
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select ename, sal+nvl(comm,0), deptno
+  2  from emp
+  3* where sal+nvl(comm,0) in (select sal+nvl(comm,0) from emp where deptno = 10)
+SQL> /
+
+3. BLAKE 와 같은 부서에 있는 사람들의 이름과 입사일을 출력하되  BLAKE는 제외
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select ename, hiredate
+  2   from emp
+  3   where deptno = (select deptno from emp where ename = 'BLAKE')
+  4*  and ename not like 'BLAKE'
+SQL> /
+
+
+
+4. 평균 급여보다 많은 급여를 받는 사원들의 사번, 이름, 월급을 나타내되 월급이 높은 사람 순으로  출력하라 ?
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select empno, ename, sal+nvl(comm,0)
+  2  from emp
+  3  where sal+nvl(comm,0) > (select avg(sal) from emp)
+  4* order by sal+nvl(comm,0) desc
+SQL> /
+
+
+5. 이름에  T  를 포함하고 있는 사원들과  동일한 부서에서 근무하고 있는 사원의 사원 번호와 이름을  출력하라 ?
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select empno, ename
+  2  from emp
+  3  where deptno in (select deptno from emp
+  4*                 where ename like '%T%')
+SQL> /
+
+6. 30번 부서의 최고 급여를 받는 사원 보다도 더 많은 급여를 받는 전체 사원들을 출력하라
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select ename
+  2  from emp
+  3  where sal > (select max(sal)
+  4               from emp
+  5*              where deptno = 30)
+SQL> /
+
+
+7. 부서 위치가 DALLAS 인  모든 사원의 이름, 부서 번호 및 직업을 출력하라 ?
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select ename, deptno, job
+  2  from emp
+  3  where deptno = (select deptno
+  4               from dept
+  5*              where loc = 'DALLAS')
+SQL> /
+
+
+
+8.  SALES  부서의 모든 사원에 대한 부서번호, 이름 및 직업을 출력하라 ?
+
+SQL> select deptno, ename, job
+  2  from emp
+  3  where deptno = (select deptno
+  4  from dept
+  5  where dname = 'SALES');
+
+
+
+9.  KING 에게  보고 하는 모든 사원의 이름과 급여를 출력하라 ? (즉 직속상사가 KING인 사원)
+SQL> select ename, sal
+  2  from emp
+  3  where mgr = (select empno
+  4              from emp
+  5              where ename = 'KING');
+
+
+10.  자신의  급여가 사원 평균 급여보다 많으면서  이름에 S자 들어가는  사원과
+     동일 부서인  모든  사원의 사원번호, 이름  및 급여를 출력하라 ?
+
+SQL> ed
+file afiedt.buf(이)가 기록되었습니다
+
+  1  select empno, ename, sal
+  2  from emp
+  3  where sal > (select avg(sal) from emp)
+  4*                               and deptno in (select deptno from emp where ename like '%S%')
+SQL> /
